@@ -11,6 +11,7 @@ import {
   Send
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { FORM_CONFIG } from "../config";
 
 export default function ContactView() {
   const [formData, setFormData] = useState({
@@ -34,9 +35,8 @@ export default function ContactView() {
     
     setIsSubmitting(true);
     
-    const metaEnv = (import.meta as any).env || {};
-    const web3FormsKey = metaEnv.VITE_WEB3FORMS_KEY;
-    const formspreeId = metaEnv.VITE_FORMSPREE_ID;
+    const web3FormsKey = FORM_CONFIG.WEB3FORMS_KEY;
+    const formspreeId = FORM_CONFIG.FORMSPREE_ID;
     
     try {
       if (web3FormsKey) {
@@ -93,7 +93,7 @@ export default function ContactView() {
         }
       } else {
         // Simulated local fallback for development/preview environments
-        console.log("No external email provider configured (VITE_WEB3FORMS_KEY or VITE_FORMSPREE_ID). Simulating submission:", formData);
+        console.log("No external email provider configured (WEB3FORMS_KEY or FORMSPREE_ID). Simulating submission:", formData);
         await new Promise((resolve) => setTimeout(resolve, 1500));
         setSubmitSuccess(true);
       }
@@ -268,6 +268,16 @@ export default function ContactView() {
                       Thank you for reaching out to JNJ Innovations LLC. We have received your inquiry and will be in touch shortly to discuss next steps.
                     </p>
                   </div>
+
+                  {!(FORM_CONFIG.WEB3FORMS_KEY || FORM_CONFIG.FORMSPREE_ID) && (
+                    <div className="p-4 bg-amber-50/80 border border-amber-200/60 rounded-lg text-left max-w-sm">
+                      <p className="font-mono text-[10px] font-bold text-amber-800 uppercase tracking-wider mb-1">// STATIC SITE CONFIG NOTICE</p>
+                      <p className="font-sans text-[11px] text-amber-800 leading-relaxed">
+                        To receive submissions directly at <strong>{FORM_CONFIG.TARGET_EMAIL}</strong> on your GitHub live site, paste your free Web3Forms Access Key or Formspree ID inside <code>src/config.ts</code> in your GitHub repo!
+                      </p>
+                    </div>
+                  )}
+
                   <button
                     onClick={() => setSubmitSuccess(false)}
                     className="px-6 py-2.5 bg-[#f5f3f5] hover:bg-[#e6e2e5] text-xs font-semibold uppercase tracking-wider text-[#0A1628] rounded border border-[#c5c6cd]/50 cursor-pointer"
